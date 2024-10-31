@@ -1,25 +1,24 @@
+# Use official Node.js alpine image
 FROM node:18-alpine
 
-# Install necessary dependencies
-RUN apk add --no-cache git
-
+# Set working directory
 WORKDIR /app
 
 # Copy package files first
 COPY package*.json ./
 
-# Clear npm cache and install dependencies
-RUN npm cache clean --force
-RUN npm install
+# Install dependencies
+# Use npm ci for clean, reproducible builds
+RUN npm ci --only=production
 
-# Copy the rest of the project
+# Copy the rest of the application code
 COPY . .
 
-# Build the project
+# Build the application
 RUN npm run build
 
-# Expose port
+# Expose the port your app runs on
 EXPOSE 5000
 
-
-CMD ["npm", "start"]
+# Start the application
+CMD ["npm", "run", "start"]
