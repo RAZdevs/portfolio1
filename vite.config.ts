@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',  // This will be your backend server
+        target: 'portfolio1-production-f876.up.railway.app',  // This will be your backend server
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
