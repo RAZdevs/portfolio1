@@ -18,8 +18,8 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
 // Verify transporter
@@ -42,7 +42,7 @@ app.post('/email', async (req, res) => {
     console.log('Attempting to send email...');
     console.log('From:', process.env.EMAIL_USER);
     console.log('To:', process.env.RECIPIENT_EMAIL);
-    
+
     const info = await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.RECIPIENT_EMAIL,
@@ -55,7 +55,13 @@ app.post('/email', async (req, res) => {
     res.status(200).json({ message: 'Email sent successfully' });
   } catch (error) {
     console.error('Detailed error:', error);
-    res.status(500).json({ message: 'Failed to send email', error: error.message });
+
+    // Type guard to check if `error` is an instance of `Error`
+    if (error instanceof Error) {
+      res.status(500).json({ message: 'Failed to send email', error: error.message });
+    } else {
+      res.status(500).json({ message: 'Failed to send email due to an unknown error' });
+    }
   }
 });
 
