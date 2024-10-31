@@ -1,24 +1,26 @@
-# Use official Node.js alpine image
-FROM node:18-alpine
+# Use official Node.js image
+FROM node:18
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files first
+# Copy package files
 COPY package*.json ./
 
-# Install dependencies
-# Use npm ci for clean, reproducible builds
-RUN npm ci --only=production
+# Install ALL dependencies (including devDependencies)
+RUN npm ci
 
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
+# Build the application (this will run tsc)
 RUN npm run build
 
-# Expose the port your app runs on
+# Remove devDependencies
+RUN npm prune --production
+
+# Expose the port your app runs on (adjust if necessary)
 EXPOSE 5000
 
 # Start the application
-CMD ["npm", "run", "start"]
+CMD ["npm", "start"]
